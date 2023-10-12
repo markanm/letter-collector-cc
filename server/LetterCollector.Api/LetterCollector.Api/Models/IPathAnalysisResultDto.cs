@@ -1,6 +1,6 @@
 ﻿namespace LetterCollector.Api.Models
 {
-    public interface IPathAnalysisResult
+    public interface IPathAnalysisResultDto
     {
         /// <summary>
         /// Gets the letters found in path.
