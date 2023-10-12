@@ -1,2 +1,4 @@
-/LetterCollector.Api/bin/*
-/LetterCollector.Api/obj/*
+LetterCollector.Api/bin/
+LetterCollector.Api/obj/
+
+.vs/
