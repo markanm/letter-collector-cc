@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using LetterCollector.Api.Services;
 
 namespace LetterCollector.Api.Controllers
 {
@@ -10,7 +11,9 @@ namespace LetterCollector.Api.Controllers
         [Route("/analyze")]
         public IActionResult AnalyzePath()
         {
-            return View();
+            var analyzer = new PathAnalyzerService();
+
+            return Ok(analyzer.AnalyzePath());
         }
     }
 }
