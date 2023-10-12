@@ -17,14 +17,16 @@ namespace LetterCollector.Api.Services
         public PathAnalysisResultDto AnalyzePath(string[] map)
         {
             var currentPosition = FindStartingPosition(map);
+            char currentChar = map[currentPosition.x][currentPosition.y];
+
             char currentDirection = FindNextDirection(map, currentPosition);
 
-            while (!Regex.IsMatch(map[currentPosition.x][currentPosition.y].ToString(), EndingCharRegex))
-            {
-                //CurrentPosition = FindNextCharacter(map, CurrentPosition);
+            //while (!Regex.IsMatch(map[currentPosition.x][currentPosition.y].ToString(), EndingCharRegex))
+            //{
+            //    //CurrentPosition = FindNextCharacter(map, CurrentPosition);
 
-                //if(CurrentPosition ==)
-            }
+            //    //if(CurrentPosition ==)
+            //}
 
             return new PathAnalysisResultDto() { Letters = "ABC", PathAsCharacters = "@---A---+|C|+---+|+-B-x" };
         }
@@ -37,14 +39,14 @@ namespace LetterCollector.Api.Services
             {
                 for (var i = 0; i < map[j].Length; i++)
                 {
-                    if (map[i][j] == StartingChar)
+                    if (map[j][i] == StartingChar)
                     {
                         if (result != null)
                         {
                             throw new ArgumentException("Invalid map: Can't have more than one starting position!");
                         }
 
-                        result = (x: j, y: i);
+                        result = (x: i, y: j);
                     }
                 }
             }
@@ -62,7 +64,15 @@ namespace LetterCollector.Api.Services
             char? result = null;
             foreach (var direction in Directions)
             {
-                if (map[position.x + direction.Value.x][position.y + direction.Value.y] != ' ')
+                int X = position.x + direction.Value.x;
+                int Y = position.y + direction.Value.y;
+
+                if ((Y < 0 || Y > map.Length) || (X < 0 || X > map[X].Length))
+                {
+                    continue;
+                }
+
+                if (map[position.y + direction.Value.y][position.x + direction.Value.x] != EmptySpaceChar)
                 {
                     if (result != null)
                     {
