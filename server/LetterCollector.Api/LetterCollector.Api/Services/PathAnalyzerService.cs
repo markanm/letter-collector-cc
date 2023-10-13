@@ -35,6 +35,7 @@ namespace LetterCollector.Api.Services
             {
                 currentPosition = Move(map, currentPosition, currentDirection);
                 var currentChar = map[currentPosition.y][currentPosition.x];
+
                 path.Append(currentChar);
 
                 if (!collectedLetterPositions.Contains(currentPosition))
@@ -50,6 +51,11 @@ namespace LetterCollector.Api.Services
                 if (Regex.IsMatch(currentChar.ToString(), ValidTurnRegex))
                 {
                     currentDirection = FindNextDirection(map, currentPosition, currentDirection);
+                }
+
+                if (currentChar == EmptySpaceChar)
+                {
+                    throw new ArgumentException("Invalid map: Broken path.");
                 }
             }
 
@@ -69,7 +75,7 @@ namespace LetterCollector.Api.Services
                         // Already found starting char, throw error
                         if (result != null)
                         {
-                            throw new ArgumentException("Invalid map: Can't have more than one starting position!");
+                            throw new ArgumentException("Invalid map: Multiple starts.");
                         }
 
                         result = (x: i, y: j);
@@ -79,7 +85,7 @@ namespace LetterCollector.Api.Services
 
             if (!result.HasValue)
             {
-                throw new ArgumentException("Invalid map: No starting character found!");
+                throw new ArgumentException("Invalid map: Missing start character.");
             }
 
             return result.Value;
@@ -100,7 +106,7 @@ namespace LetterCollector.Api.Services
                     }
                     else
                     {
-                        throw new ArgumentException("Invalid map: Fake turn detected!");
+                        throw new ArgumentException("Invalid map: Fake turn.");
                     }
                 }
             }
@@ -131,14 +137,14 @@ namespace LetterCollector.Api.Services
 
             if (!result.HasValue)
             {
-                throw new ArgumentException("Invalid map: Cannot find next direction!");
+                throw new ArgumentException("Invalid map: Cannot find next direction.");
             }
 
             var oppositePosition = Move(map, position, GetOppositeDirection(result.Value));
 
             if (IsValidPosition(map, oppositePosition.x, oppositePosition.y) && map[oppositePosition.y][oppositePosition.x] != EmptySpaceChar)
             {
-                throw new ArgumentException("Invalid map: Cannot have 2 opposed directions!");
+                throw new ArgumentException("Invalid map: Fork in path.");
             }
 
             return result.Value;
