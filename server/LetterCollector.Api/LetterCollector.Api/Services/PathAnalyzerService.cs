@@ -1,10 +1,11 @@
 ﻿using LetterCollector.Api.Models;
+using LetterCollector.Api.Services.Interfaces;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LetterCollector.Api.Services
 {
-    public class PathAnalyzerService
+    public class PathAnalyzerService : IPathAnalyzerService
     {
         private const char StartingChar = '@';
         private const char EndingChar = 'x';
@@ -117,6 +118,7 @@ namespace LetterCollector.Api.Services
                     continue;
                 }
 
+                // Make sure we are on valid path and not turning back the way we came from
                 if (map[y][x] != EmptySpaceChar && direction.Key != currentDirection)
                 {
                     if (currentDirection == null || (currentDirection != null && direction.Key != GetOppositeDirection(currentDirection.Value)))
