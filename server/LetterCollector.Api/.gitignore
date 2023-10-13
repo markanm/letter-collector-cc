@@ -1,4 +1,7 @@
 LetterCollector.Api/bin/
 LetterCollector.Api/obj/
 
+LetterCollector.Tests/bin/
+LetterCollector.Tests/obj/
+
 .vs/
