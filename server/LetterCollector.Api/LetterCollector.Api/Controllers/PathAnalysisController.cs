@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LetterCollector.Api.Services;
+using LetterCollector.Api.Services.Interfaces;
 
 namespace LetterCollector.Api.Controllers
 {
@@ -7,15 +8,27 @@ namespace LetterCollector.Api.Controllers
     [Route("/map")]
     public class PathAnalysisController : Controller
     {
+        private readonly IPathAnalyzerService _pathAnalyzerService;
+
+        public PathAnalysisController(IPathAnalyzerService pathAnalyzerService)
+        {
+            _pathAnalyzerService = pathAnalyzerService;
+        }
+
         [HttpPost]
         [Route("/analyze")]
         public IActionResult AnalyzePath([FromBody] string[] map)
         {
-            Console.WriteLine(map);
+            try
+            {
+                var analyzer = _pathAnalyzerService;
 
-            var analyzer = new PathAnalyzerService();
-
-            return Ok(analyzer.AnalyzePath(map));
+                return Ok(analyzer.AnalyzePath(map));
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
