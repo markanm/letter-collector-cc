@@ -34,10 +34,10 @@ namespace LetterCollector.Api.Services
             {
                 currentPosition = Move(map, currentPosition, currentDirection);
                 var currentChar = map[currentPosition.y][currentPosition.x];
+                path.Append(currentChar);
 
                 if (!collectedLetterPositions.Contains(currentPosition))
                 {
-                    path.Append(currentChar);
 
                     if (Regex.IsMatch(currentChar.ToString(), ValidLetterRegex))
                     {
