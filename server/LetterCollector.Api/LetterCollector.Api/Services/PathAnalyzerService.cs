@@ -7,10 +7,12 @@ namespace LetterCollector.Api.Services
     public class PathAnalyzerService
     {
         private const char StartingChar = '@';
-        private const string EndingCharRegex = "[xX]";
-        private const string ValidLetterRegex = "(?i)[a-wyz]";
-        private const string ValidTurnRegex = "(?i)[a-wyz+]";
+        private const char EndingChar = 'x';
         private const char EmptySpaceChar = ' ';
+        private const string ValidLetterRegex = @"[A-Z]";
+        private const string ValidTurnRegex = @"[A-Z+]";
+        private const string ValidHorizontalCharsRegex = @"[A-Zx+-]";
+        private const string ValidVerticalCharsRegex = @"[A-Zx+|]";
 
         private static readonly Dictionary<char, (int x, int y)> Directions = new Dictionary<char, (int x, int y)>
         {
@@ -28,7 +30,7 @@ namespace LetterCollector.Api.Services
 
             char currentDirection = FindNextDirection(map, currentPosition, null);
 
-            while (!Regex.IsMatch(map[currentPosition.y][currentPosition.x].ToString(), EndingCharRegex))
+            while (map[currentPosition.y][currentPosition.x] != EndingChar)
             {
                 currentPosition = Move(map, currentPosition, currentDirection);
                 var currentChar = map[currentPosition.y][currentPosition.x];
@@ -53,7 +55,7 @@ namespace LetterCollector.Api.Services
             return new PathAnalysisResultDto() { Letters = letters.ToString(), PathAsCharacters = path.ToString() };
         }
 
-        private (int x, int y) FindStartingPosition(string[] map)
+        private static (int x, int y) FindStartingPosition(string[] map)
         {
             (int x, int y)? result = null;
 
@@ -63,6 +65,7 @@ namespace LetterCollector.Api.Services
                 {
                     if (map[j][i] == StartingChar)
                     {
+                        // Already found starting char, throw error
                         if (result != null)
                         {
                             throw new ArgumentException("Invalid map: Can't have more than one starting position!");
@@ -88,7 +91,7 @@ namespace LetterCollector.Api.Services
             {
                 var nextPosition = Move(map, position, currentDirection.Value);
 
-                if (IsValidPosition(map, nextPosition.x, nextPosition.y) && map[nextPosition.y][nextPosition.x] != EmptySpaceChar)
+                if (IsValidDirection(map, nextPosition.x, nextPosition.y, currentDirection.Value))
                 {
                     if (Regex.IsMatch(map[position.y][position.x].ToString(), ValidLetterRegex))
                     {
@@ -164,6 +167,21 @@ namespace LetterCollector.Api.Services
         private static bool IsValidPosition(string[] map, int x, int y)
         {
             return (y >= 0 && y < map.Length) && (x >= 0 && x < map[y].Length);
+        }
+
+        private static bool IsValidDirection(string[] map, int x, int y, char currentDirection)
+        {
+            return IsValidPosition(map, x, y) && CheckValidDirectionCharacter(map[y][x], currentDirection);
+        }
+
+        private static bool CheckValidDirectionCharacter(char currentCharacter, char currentDirection)
+        {
+            return currentDirection switch
+            {
+                'R' or 'L' => Regex.IsMatch(currentCharacter.ToString(), ValidHorizontalCharsRegex),
+                'D' or 'U' => Regex.IsMatch(currentCharacter.ToString(), ValidVerticalCharsRegex),
+                _ => throw new ArgumentException("Invalid direction!")
+            };
         }
     }
 }
