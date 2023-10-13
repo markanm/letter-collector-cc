@@ -22,6 +22,7 @@ namespace LetterCollector.Api.Services
             var letters = new StringBuilder();
             var path = new StringBuilder();
             var currentPosition = FindStartingPosition(map);
+            List<(int x, int y)> collectedLetterPositions = new List<(int x, int y)>();
 
             path.Append(map[currentPosition.y][currentPosition.x]);
 
@@ -30,17 +31,20 @@ namespace LetterCollector.Api.Services
             while (!Regex.IsMatch(map[currentPosition.y][currentPosition.x].ToString(), EndingCharRegex))
             {
                 currentPosition = Move(map, currentPosition, currentDirection);
+                var currentChar = map[currentPosition.y][currentPosition.x];
 
-                var nextChar = map[currentPosition.y][currentPosition.x];
-
-                path.Append(nextChar);
-
-                if (Regex.IsMatch(nextChar.ToString(), ValidLetterRegex))
+                if (!collectedLetterPositions.Contains(currentPosition))
                 {
-                    letters.Append(nextChar);
+                    path.Append(currentChar);
+
+                    if (Regex.IsMatch(currentChar.ToString(), ValidLetterRegex))
+                    {
+                        letters.Append(currentChar);
+                        collectedLetterPositions.Add(currentPosition);
+                    }
                 }
 
-                if (Regex.IsMatch(nextChar.ToString(), ValidTurnRegex))
+                if (Regex.IsMatch(currentChar.ToString(), ValidTurnRegex))
                 {
                     currentDirection = FindNextDirection(map, currentPosition, currentDirection);
                 }
