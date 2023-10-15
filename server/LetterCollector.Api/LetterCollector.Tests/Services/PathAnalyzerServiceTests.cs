@@ -2,10 +2,6 @@
 using LetterCollector.Api.Services.Interfaces;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LetterCollector.Tests.Services
 {
@@ -283,6 +279,34 @@ namespace LetterCollector.Tests.Services
             // Assert
             var ex = Assert.Throws<ArgumentException>(() => _service?.AnalyzePath(sampleMap), "Invalid Map");
             Assert.AreEqual("Invalid map: Fake turn.", ex?.Message);
+        }
+
+        [Test]
+        public void AnalyzePath_InvalidMapForbiddenChar1_ThrowsArgumentException()
+        {
+            // Arrange
+            var sampleMap = new[]
+            {
+                " @-A-*-B-x "
+            };
+
+            // Assert
+            var ex = Assert.Throws<ArgumentException>(() => _service?.AnalyzePath(sampleMap), "Invalid Map");
+            Assert.AreEqual("Invalid map: Forbidden character.", ex?.Message);
+        }
+
+        [Test]
+        public void AnalyzePath_InvalidMapForbiddenChar2_ThrowsArgumentException()
+        {
+            // Arrange
+            var sampleMap = new[]
+            {
+                " @-A-/-B-x "
+            };
+
+            // Assert
+            var ex = Assert.Throws<ArgumentException>(() => _service?.AnalyzePath(sampleMap), "Invalid Map");
+            Assert.AreEqual("Invalid map: Forbidden character.", ex?.Message);
         }
     }
 }
