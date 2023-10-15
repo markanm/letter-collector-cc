@@ -10,6 +10,7 @@ namespace LetterCollector.Api.Services
         private const char StartingChar = '@';
         private const char EndingChar = 'x';
         private const char EmptySpaceChar = ' ';
+        private const string ValidCharacterRegex = "[A-Zx+|-]";
         private const string ValidLetterRegex = @"[A-Z]";
         private const string ValidTurnRegex = @"[A-Z+]";
         private const string ValidHorizontalCharsRegex = @"[A-Zx+-]";
@@ -36,11 +37,20 @@ namespace LetterCollector.Api.Services
                 currentPosition = Move(map, currentPosition, currentDirection);
                 var currentChar = map[currentPosition.y][currentPosition.x];
 
+                if (currentChar == EmptySpaceChar)
+                {
+                    throw new ArgumentException("Invalid map: Broken path.");
+                }
+
+                if (!Regex.IsMatch(currentChar.ToString(), ValidCharacterRegex))
+                {
+                    throw new ArgumentException("Invalid map: Forbidden character.");
+                }
+
                 path.Append(currentChar);
 
                 if (!collectedLetterPositions.Contains(currentPosition))
                 {
-
                     if (Regex.IsMatch(currentChar.ToString(), ValidLetterRegex))
                     {
                         letters.Append(currentChar);
@@ -51,11 +61,6 @@ namespace LetterCollector.Api.Services
                 if (Regex.IsMatch(currentChar.ToString(), ValidTurnRegex))
                 {
                     currentDirection = FindNextDirection(map, currentPosition, currentDirection);
-                }
-
-                if (currentChar == EmptySpaceChar)
-                {
-                    throw new ArgumentException("Invalid map: Broken path.");
                 }
             }
 
@@ -100,14 +105,12 @@ namespace LetterCollector.Api.Services
 
                 if (IsValidDirection(map, nextPosition.x, nextPosition.y, currentDirection.Value))
                 {
-                    if (Regex.IsMatch(map[position.y][position.x].ToString(), ValidLetterRegex))
-                    {
-                        return currentDirection.Value;
-                    }
-                    else
+                    if (!Regex.IsMatch(map[position.y][position.x].ToString(), ValidLetterRegex))
                     {
                         throw new ArgumentException("Invalid map: Fake turn.");
                     }
+
+                    return currentDirection.Value;
                 }
             }
 
@@ -140,6 +143,7 @@ namespace LetterCollector.Api.Services
                 throw new ArgumentException("Invalid map: Cannot find next direction.");
             }
 
+            // Check that opposite direction doesn't have a valid character as well, otherwise fake turn is detected
             var oppositePosition = Move(map, position, GetOppositeDirection(result.Value));
 
             if (IsValidPosition(map, oppositePosition.x, oppositePosition.y) && map[oppositePosition.y][oppositePosition.x] != EmptySpaceChar)
