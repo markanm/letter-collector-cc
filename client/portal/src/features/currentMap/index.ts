@@ -1,2 +1,2 @@
-export { default as currentMapSlice } from "./currentMapSlice";
+export { default as currentMap } from "./currentMapSlice";
 export * from "./currentMapSlice";

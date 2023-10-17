@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { AppThunk } from "../../store";
 import { analyzeService } from "../../services/AnalyzerService";
-import { Map } from "../../types/Map";
+import { Map } from "../../types";
 
-const currentMapSlice = createSlice({
+const currentMap = createSlice({
   name: "currentMap",
   initialState: {
     mapText: "",
@@ -85,17 +85,17 @@ const currentMapSlice = createSlice({
 });
 
 export const { textUpdated, pathAnalyzedOk, pathAnalyzedErr } =
-  currentMapSlice.actions;
+  currentMap.actions;
 
-export const selectCurrent = (state: { currentMapSlice: Map }) =>
-  state.currentMapSlice;
+export const selectCurrent = (state: { currentMap: Map }) =>
+  state.currentMap;
 
 export const analyzeMap = (): AppThunk => {
   return async (dispatch, getState) => {
     try {
       const stateBefore = getState();
       const result = await analyzeService.analyzePath(
-        stateBefore.currentMapSlice.mapText.split("\n")
+        stateBefore.currentMap.mapText.split("\n")
       );
 
       dispatch(pathAnalyzedOk(result.letters, result.pathAsCharacters));
@@ -112,4 +112,4 @@ export const analyzeMap = (): AppThunk => {
   };
 };
 
-export default currentMapSlice.reducer;
+export default currentMap.reducer;

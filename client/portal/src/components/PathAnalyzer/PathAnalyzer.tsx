@@ -4,11 +4,14 @@ import {
   selectCurrent,
   textUpdated,
 } from "../../features/currentMap";
+import { saveMap, selectSaved } from "../../features/savedMaps";
 import { AppDispatch } from "../../store";
 import * as Styled from "./PathAnalyzer.styles";
 
 const PathAnalyzer = () => {
   const current = useSelector(selectCurrent);
+  const saved = useSelector(selectSaved);
+
   const dispatch = useDispatch<AppDispatch>();
 
   return (
@@ -25,9 +28,14 @@ const PathAnalyzer = () => {
         rows={6}
         onChange={(e) => dispatch(textUpdated(e.target.value))}
       />
-      <Styled.Button onClick={() => dispatch(analyzeMap())}>
-        Analyze
-      </Styled.Button>
+      <Styled.ButtonsWrapper>
+        <Styled.Button disabled={current.analyzed} onClick={() => dispatch(analyzeMap())}>
+          Analyze Map
+        </Styled.Button>
+        <Styled.Button onClick={() => dispatch(saveMap())}>
+          Save Map
+        </Styled.Button>
+      </Styled.ButtonsWrapper>
       {current && current.analyzed && current.valid && (
         <>
           <div>Letters: {current.letters}</div>
@@ -35,6 +43,7 @@ const PathAnalyzer = () => {
         </>
       )}
       {current && !current.valid && <div>{current.errorMessage}</div>}
+      <div>{saved?.length}</div>
     </Styled.Container>
   );
 };

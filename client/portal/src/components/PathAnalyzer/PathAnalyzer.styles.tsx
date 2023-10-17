@@ -32,7 +32,12 @@ export const TextArea = styled.textarea`
   padding: 1rem;
 `;
 
+export const ButtonsWrapper = styled.div`
+  display: flex;
+`;
+
 export const Button = styled.button`
+  margin: 0 8px;
   margin-top: 2rem;
   font-size: 1rem;
 `;

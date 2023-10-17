@@ -4,18 +4,20 @@ import {
   combineReducers,
   configureStore,
 } from "@reduxjs/toolkit";
-import { currentMapSlice } from "../features/currentMap";
+import { currentMap } from "../features/currentMap";
+import { savedMaps } from "../features/savedMaps";
 
-const rootReducer = combineReducers({ currentMapSlice });
+const rootReducer = combineReducers({ currentMap, savedMaps });
 
 const store = configureStore({
   reducer: {
-    currentMapSlice: currentMapSlice,
+    currentMap: currentMap,
+    savedMaps: savedMaps,
   },
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
