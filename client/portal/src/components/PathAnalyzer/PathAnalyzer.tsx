@@ -1,17 +1,15 @@
-import { useState } from "react";
-import { analyzeService } from "../../services/AnalyzerService/AnalyzerService";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  analyzeMap,
+  selectCurrent,
+  textUpdated,
+} from "../../features/currentMap";
+import { AppDispatch } from "../../store";
 import * as Styled from "./PathAnalyzer.styles";
 
 const PathAnalyzer = () => {
-  const [mapText, setMapText] = useState("");
-  const [result, setResult] = useState({
-    letters: "",
-    pathAsCharacters: "",
-  });
-
-  const analyzePath = async () => {
-    setResult(await analyzeService.analyzePath(mapText.split("\n")));
-  };
+  const current = useSelector(selectCurrent);
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <Styled.Container>
@@ -23,14 +21,20 @@ const PathAnalyzer = () => {
         <li>Collect letters</li>
         <li>Stop when you reach the character x</li>
       </Styled.RuleList>
-      <Styled.TextArea rows={6} onChange={(e) => setMapText(e.target.value)} />
-      <Styled.Button onClick={() => analyzePath()}>Analyze</Styled.Button>
-      {result && (
+      <Styled.TextArea
+        rows={6}
+        onChange={(e) => dispatch(textUpdated(e.target.value))}
+      />
+      <Styled.Button onClick={() => dispatch(analyzeMap())}>
+        Analyze
+      </Styled.Button>
+      {current && current.analyzed && current.valid && (
         <>
-          <div>Letters: {result.letters}</div>
-          <div>Path: {result.pathAsCharacters}</div>
+          <div>Letters: {current.letters}</div>
+          <div>Path: {current.pathAsCharacters}</div>
         </>
       )}
+      {current && !current.valid && <div>{current.errorMessage}</div>}
     </Styled.Container>
   );
 };
