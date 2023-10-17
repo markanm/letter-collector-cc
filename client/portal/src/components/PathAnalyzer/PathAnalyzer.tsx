@@ -4,9 +4,13 @@ import * as Styled from "./PathAnalyzer.styles";
 
 const PathAnalyzer = () => {
   const [mapText, setMapText] = useState("");
+  const [result, setResult] = useState({
+    letters: "",
+    pathAsCharacters: "",
+  });
 
   const analyzePath = async () => {
-    await analyzeService.analyzePath(mapText.split("\n"));
+    setResult(await analyzeService.analyzePath(mapText.split("\n")));
   };
 
   return (
@@ -21,6 +25,12 @@ const PathAnalyzer = () => {
       </Styled.RuleList>
       <Styled.TextArea rows={6} onChange={(e) => setMapText(e.target.value)} />
       <Styled.Button onClick={() => analyzePath()}>Analyze</Styled.Button>
+      {result && (
+        <>
+          <div>Letters: {result.letters}</div>
+          <div>Path: {result.pathAsCharacters}</div>
+        </>
+      )}
     </Styled.Container>
   );
 };
